@@ -31,15 +31,19 @@ class AuthService {
         token: '',
       );
 
-      var USER_URL = dotenv.env['base'];
+      var userUrl = dotenv.env['base'];
+
+      print(userUrl);
 
       http.Response response = await http.post(
-        Uri.parse('$USER_URL/api/signup'),
+        Uri.parse('$userUrl/api/signup'),
         body: user.toJson(),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
       );
+
+      print(response.body);
 
       if (context.mounted) {
         httpErrorHandlers(
@@ -63,10 +67,10 @@ class AuthService {
     required BuildContext context,
   }) async {
     try {
-      var USER_URL = dotenv.env['base'];
+      var userUrl = dotenv.env['base'];
 
       http.Response response = await http.post(
-        Uri.parse('$USER_URL/api/signin'),
+        Uri.parse('$userUrl/api/signin'),
         body: jsonEncode({'email': email, 'password': password}),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
@@ -85,13 +89,58 @@ class AuthService {
             await prefs.setString(
                 'x-auth-token', jsonDecode(response.body)['token']);
 
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              Home.routeName,
-              (route) => false,
-            );
+            if (context.mounted) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                Home.routeName,
+                (route) => false,
+              );
+            }
           },
         );
+      }
+    } catch (e) {
+      showCupertinoAlertDialog(context, e.toString());
+    }
+  }
+
+  // fetch user's data
+  void fetchUserData(
+    BuildContext context,
+  ) async {
+    try {
+      var userUrl = dotenv.env['base'];
+
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+
+      String? token = preferences.getString('x-auth-token');
+
+      if (token == null) {
+        preferences.setString('x-auth-token', '');
+      }
+
+      var tokenResponse = await http.post(
+        Uri.parse('$userUrl/tokenIsValid'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token!,
+        },
+      );
+
+      var response = jsonDecode(tokenResponse.body);
+
+      if (response == true) {
+        // fetch user
+        http.Response result = await http.get(
+          Uri.parse('$userUrl/'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token,
+          },
+        );
+
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        userProvider.setUser(result.body);
       }
     } catch (e) {
       showCupertinoAlertDialog(context, e.toString());

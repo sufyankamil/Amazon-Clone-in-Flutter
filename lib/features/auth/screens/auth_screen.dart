@@ -66,10 +66,10 @@ class _AuthScreenState extends State<AuthScreen> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                'Welcome to the Shopping app, Build your dream world with us.',
+                'Build your dream world with us.',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
@@ -105,20 +105,23 @@ class _AuthScreenState extends State<AuthScreen> {
                           children: [
                             CustomFormField(
                               hintText: 'Name',
-                              labelText: 'Enter name',
+                              labelText: 'Enter your name',
                               controller: nameController,
+                              prefixIcon: const Icon(Icons.person),
                             ),
                             const SizedBox(height: 7),
                             CustomFormField(
                               controller: emailController,
                               labelText: 'Enter your email address',
                               hintText: 'Email',
+                              prefixIcon: const Icon(Icons.email),
                             ),
                             const SizedBox(height: 7),
                             CustomFormField(
                               labelText: 'Enter password',
                               controller: passwordController,
                               hintText: 'Password',
+                              prefixIcon: const Icon(Icons.password),
                             ),
                             const SizedBox(height: 10),
                             CustomButton(
@@ -161,12 +164,14 @@ class _AuthScreenState extends State<AuthScreen> {
                           controller: emailController,
                           labelText: 'Enter your email address',
                           hintText: 'Email',
+                          prefixIcon: const Icon(Icons.email),
                         ),
                         const SizedBox(height: 10),
                         CustomFormField(
                           labelText: 'Enter password',
                           controller: passwordController,
                           hintText: 'Password',
+                          prefixIcon: const Icon(Icons.password),
                         ),
                         const SizedBox(height: 20),
                         CustomButton(text: 'Sign in', onTap: _submitFormSignIn),
@@ -203,26 +208,22 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _submitFormSignUp() {
-    if (_auth == Auth.signUp) {
-      if (_signUpFormKey.currentState!.validate()) {
-        _signUpFormKey.currentState!.save();
-        print('Name: $nameController');
-        print('Email: $emailController');
-        print('Password: $passwordController');
-        signUpUser();
-      }
+    if (_signUpFormKey.currentState!.validate()) {
+      // _signUpFormKey.currentState!.save();
+      // print('Name: $nameController');
+      // print('Email: $emailController');
+      // print('Password: $passwordController');
+      signUpUser();
     }
   }
 
   void _submitFormSignIn() {
-    if (_auth == Auth.signIn) {
-      if (_signInFormKey.currentState!.validate()) {
-        _signInFormKey.currentState!.save();
-        print('Name: $nameController');
-        print('Email: $emailController');
-        print('Password: $passwordController');
-        signInUser();
-      }
+    if (_signInFormKey.currentState!.validate()) {
+      _signInFormKey.currentState!.save();
+      print('Name: $nameController');
+      print('Email: $emailController');
+      print('Password: $passwordController');
+      signInUser();
     }
   }
 }
