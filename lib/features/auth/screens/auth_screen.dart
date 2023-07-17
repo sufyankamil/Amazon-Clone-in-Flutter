@@ -20,7 +20,9 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   Auth _auth = Auth.signUp;
 
-  final _formKey = GlobalKey<FormState>();
+  final _signUpFormKey = GlobalKey<FormState>();
+
+  final _signInFormKey = GlobalKey<FormState>();
 
   final TextEditingController nameController = TextEditingController();
 
@@ -36,6 +38,14 @@ class _AuthScreenState extends State<AuthScreen> {
       email: emailController.text,
       password: passwordController.text,
       name: nameController.text,
+    );
+  }
+
+  void signInUser() {
+    authService.signInUser(
+      context: context,
+      email: emailController.text,
+      password: passwordController.text,
     );
   }
 
@@ -90,7 +100,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     padding: const EdgeInsets.all(8),
                     color: GlobalVariables.backgroundColor,
                     child: Form(
-                        key: _formKey,
+                        key: _signUpFormKey,
                         child: Column(
                           children: [
                             CustomFormField(
@@ -111,7 +121,8 @@ class _AuthScreenState extends State<AuthScreen> {
                               hintText: 'Password',
                             ),
                             const SizedBox(height: 10),
-                            CustomButton(text: 'Sign up', onTap: _submitForm),
+                            CustomButton(
+                                text: 'Sign up', onTap: _submitFormSignUp),
                           ],
                         )),
                   ),
@@ -142,7 +153,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   padding: const EdgeInsets.all(8),
                   color: GlobalVariables.backgroundColor,
                   child: Form(
-                    key: _formKey,
+                    key: _signInFormKey,
                     child: Column(
                       children: [
                         const SizedBox(height: 10),
@@ -158,7 +169,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           hintText: 'Password',
                         ),
                         const SizedBox(height: 20),
-                        CustomButton(text: 'Sign in', onTap: _submitForm),
+                        CustomButton(text: 'Sign in', onTap: _submitFormSignIn),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -191,13 +202,27 @@ class _AuthScreenState extends State<AuthScreen> {
         hasSpecialChars;
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      print('Name: $nameController');
-      print('Email: $emailController');
-      print('Password: $passwordController');
-      signUpUser();
+  void _submitFormSignUp() {
+    if (_auth == Auth.signUp) {
+      if (_signUpFormKey.currentState!.validate()) {
+        _signUpFormKey.currentState!.save();
+        print('Name: $nameController');
+        print('Email: $emailController');
+        print('Password: $passwordController');
+        signUpUser();
+      }
+    }
+  }
+
+  void _submitFormSignIn() {
+    if (_auth == Auth.signIn) {
+      if (_signInFormKey.currentState!.validate()) {
+        _signInFormKey.currentState!.save();
+        print('Name: $nameController');
+        print('Email: $emailController');
+        print('Password: $passwordController');
+        signInUser();
+      }
     }
   }
 }
