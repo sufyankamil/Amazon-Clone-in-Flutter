@@ -9,12 +9,12 @@ void showSnackBar(BuildContext context, String text) {
   );
 }
 
-void showCupertinoAlertDialog(BuildContext context, String text) {
+void showCupertinoAlertDialog(BuildContext context, String text, String titleText) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return CupertinoAlertDialog(
-        title: const Text("Alert"),
+        title: Text(titleText),
         content: Text(text),
         actions: <Widget>[
           CupertinoDialogAction(

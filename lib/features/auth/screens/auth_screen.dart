@@ -209,10 +209,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _submitFormSignUp() {
     if (_signUpFormKey.currentState!.validate()) {
-      // _signUpFormKey.currentState!.save();
-      // print('Name: $nameController');
-      // print('Email: $emailController');
-      // print('Password: $passwordController');
       signUpUser();
     }
   }
@@ -220,9 +216,6 @@ class _AuthScreenState extends State<AuthScreen> {
   void _submitFormSignIn() {
     if (_signInFormKey.currentState!.validate()) {
       _signInFormKey.currentState!.save();
-      print('Name: $nameController');
-      print('Email: $emailController');
-      print('Password: $passwordController');
       signInUser();
     }
   }

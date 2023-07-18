@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../common/bottom_bar.dart';
 import '../home/screens/home.dart';
 
 class AuthService {
@@ -33,8 +34,6 @@ class AuthService {
 
       var userUrl = dotenv.env['base'];
 
-      print(userUrl);
-
       http.Response response = await http.post(
         Uri.parse('$userUrl/api/signup'),
         body: user.toJson(),
@@ -43,20 +42,25 @@ class AuthService {
         },
       );
 
-      print(response.body);
-
       if (context.mounted) {
         httpErrorHandlers(
           response: response,
           context: context,
           onSuccess: () {
             showCupertinoAlertDialog(
-                context, 'Account created! Login with the same credentials');
+              context,
+              'Account created! Login with the same credentials',
+              'Success',
+            );
           },
         );
       }
     } catch (e) {
-      showCupertinoAlertDialog(context, e.toString());
+      showCupertinoAlertDialog(
+        context,
+        'Unable to connect to server! Please try again after sometime',
+        'Alert',
+      );
     }
   }
 
@@ -92,7 +96,7 @@ class AuthService {
             if (context.mounted) {
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                Home.routeName,
+                BottomBar.routeName,
                 (route) => false,
               );
             }
@@ -100,7 +104,8 @@ class AuthService {
         );
       }
     } catch (e) {
-      showCupertinoAlertDialog(context, e.toString());
+      showCupertinoAlertDialog(context, 'Alert',
+          'Unable to connect to server! Please try again after sometime');
     }
   }
 
@@ -143,7 +148,7 @@ class AuthService {
         userProvider.setUser(result.body);
       }
     } catch (e) {
-      showCupertinoAlertDialog(context, e.toString());
+      showCupertinoAlertDialog(context, 'Alert', e.toString());
     }
   }
 }
