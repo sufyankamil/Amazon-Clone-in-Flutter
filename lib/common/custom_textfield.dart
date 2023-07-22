@@ -7,6 +7,7 @@ class CustomFormField extends StatelessWidget {
   final String labelText;
   final String hintText;
   final Icon prefixIcon;
+  final int maxLines;
 
   const CustomFormField({
     super.key,
@@ -14,6 +15,7 @@ class CustomFormField extends StatelessWidget {
     required this.labelText,
     required this.hintText,
     required this.prefixIcon,
+    this.maxLines = 1,
   });
 
   @override
@@ -56,6 +58,7 @@ class CustomFormField extends StatelessWidget {
         }
         return null;
       },
+      maxLines: maxLines,
     );
   }
 }

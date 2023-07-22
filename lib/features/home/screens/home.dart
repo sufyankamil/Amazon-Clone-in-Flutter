@@ -5,6 +5,7 @@ import '../../../common/constants/global_variables.dart';
 import '../../../providers/user_provider.dart';
 import '../../widgets/address_box.dart';
 import '../../widgets/carousel_image.dart';
+import '../../widgets/deal_of_day.dart';
 import '../../widgets/top_categories.dart';
 
 class Home extends StatefulWidget {
@@ -100,15 +101,16 @@ class _HomeState extends State<Home> {
           ]),
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           children: [
-            const AddressBox(),
-            const SizedBox(height: 10),
-            const TopCategories(),
-            const SizedBox(height: 10),
-            const CarouselImage(),
-            Center(child: Text(userData.toJson())),
+            AddressBox(),
+            SizedBox(height: 10),
+            TopCategories(),
+            SizedBox(height: 10),
+            CarouselImage(),
+            DealOfDay(),
+            // Center(child: Text(userData.toJson())),
           ],
         ),
       ),

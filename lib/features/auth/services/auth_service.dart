@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:amazon_clone/common/constants/error_hanlders.dart';
 import 'package:amazon_clone/common/constants/utils.dart';
+import 'package:amazon_clone/features/admin/screens/admin_screen.dart';
 import 'package:amazon_clone/models/user.dart';
 import 'package:amazon_clone/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../common/bottom_bar.dart';
-import '../home/screens/home.dart';
+import '../../../common/bottom_bar.dart';
 
 class AuthService {
   // sign up user
@@ -69,13 +69,14 @@ class AuthService {
     required String email,
     required String password,
     required BuildContext context,
+    required String type,
   }) async {
     try {
       var userUrl = dotenv.env['base'];
 
       http.Response response = await http.post(
         Uri.parse('$userUrl/api/signin'),
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({'email': email, 'password': password, type: 'type'}),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -94,11 +95,19 @@ class AuthService {
                 'x-auth-token', jsonDecode(response.body)['token']);
 
             if (context.mounted) {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                BottomBar.routeName,
-                (route) => false,
-              );
+              if (type == 'admin') {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AdminScreen.routeName,
+                  (route) => false,
+                );
+              } else {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  BottomBar.routeName,
+                  (route) => false,
+                );
+              }
             }
           },
         );
@@ -110,19 +119,60 @@ class AuthService {
   }
 
   // fetch user's data
-  void fetchUserData(
-    BuildContext context,
-  ) async {
+  // void fetchUserData(
+  //   BuildContext context,
+  // ) async {
+  //   try {
+  //     var userUrl = dotenv.env['base'];
+
+  //     SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  //     String? token = preferences.getString('x-auth-token');
+
+  //     if (token == null) {
+  //       preferences.setString('x-auth-token', '');
+  //     }
+
+  //     var tokenResponse = await http.post(
+  //       Uri.parse('$userUrl/tokenIsValid'),
+  //       headers: <String, String>{
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //         'x-auth-token': token!,
+  //       },
+  //     );
+
+  //     var response = jsonDecode(tokenResponse.body);
+
+  //     if (response == true) {
+  //       // fetch user
+  //       http.Response result = await http.get(
+  //         Uri.parse('$userUrl/'),
+  //         headers: <String, String>{
+  //           'Content-Type': 'application/json; charset=UTF-8',
+  //           'x-auth-token': token,
+  //         },
+  //       );
+
+  //       final userProvider = Provider.of<UserProvider>(context, listen: false);
+  //       userProvider.setUser(result.body);
+  //     }
+  //   } catch (e) {
+  //     showCupertinoAlertDialog(context, 'Alert', e.toString());
+  //   }
+  // }
+
+  Future<UserProvider> fetchUserData(BuildContext context) async {
     try {
       var userUrl = dotenv.env['base'];
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
-
       String? token = preferences.getString('x-auth-token');
 
       if (token == null) {
         preferences.setString('x-auth-token', '');
       }
+
+      print('here ');
 
       var tokenResponse = await http.post(
         Uri.parse('$userUrl/tokenIsValid'),
@@ -146,9 +196,13 @@ class AuthService {
 
         final userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.setUser(result.body);
+
+        return userProvider;
+      } else {
+        throw Exception('Invalid token or server error');
       }
     } catch (e) {
-      showCupertinoAlertDialog(context, 'Alert', e.toString());
+      throw Exception('Failed to fetch user data. Check server connection.');
     }
   }
 }
