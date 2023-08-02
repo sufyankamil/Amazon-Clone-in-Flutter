@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amazon_clone/common/bottom_bar.dart';
 import 'package:amazon_clone/common/constants/global_variables.dart';
 import 'package:amazon_clone/features/auth/services/auth_service.dart';
@@ -14,14 +16,19 @@ import 'features/admin/screens/admin_screen.dart';
 
 void main() async {
   await dotenv.load();
-  runApp(MultiProvider(
+  runApp(
+    MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (context) => UserProvider(),
         ),
       ],
-      child:
-          const MaterialApp(debugShowCheckedModeBanner: false, home: MyApp())));
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MyApp(),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -76,7 +83,31 @@ class _MyAppState extends State<MyApp> {
                   ? const BottomBar()
                   : const AdminScreen()
               : const SplashScreen()
-          : buildNoServerConnectionMessage(),
+          // : buildNotConnected()
+          : AnimatedOpacity(
+              opacity: 1.0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              child: buildNoServerConnectionMessage(),
+            ),
+    );
+  }
+
+  Widget buildNotConnected() {
+    return Scaffold(
+      body: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.grey[200],
+        ),
+        child: const Text(
+          'Oops! Something went wrong. This was not what we expected',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 
@@ -95,8 +126,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-
 
 // import 'package:amazon_clone/common/bottom_bar.dart';
 // import 'package:amazon_clone/common/constants/global_variables.dart';

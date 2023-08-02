@@ -5,6 +5,7 @@ import 'package:amazon_clone/common/constants/utils.dart';
 import 'package:amazon_clone/features/admin/screens/admin_screen.dart';
 import 'package:amazon_clone/models/user.dart';
 import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -172,7 +173,9 @@ class AuthService {
         preferences.setString('x-auth-token', '');
       }
 
-      print('here ');
+      if (kDebugMode) {
+        print('here ');
+      }
 
       var tokenResponse = await http.post(
         Uri.parse('$userUrl/tokenIsValid'),
@@ -194,6 +197,7 @@ class AuthService {
           },
         );
 
+        // ignore: use_build_context_synchronously
         final userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.setUser(result.body);
 
